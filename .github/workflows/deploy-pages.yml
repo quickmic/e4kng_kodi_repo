@@ -1,4 +1,3 @@
-
 name: Deploy GitHub Pages
 
 on:
@@ -8,12 +7,16 @@ on:
     paths:
       - 'index.html'
       - 'Public testing/**'
+      - 'repo/**'
+      - 'repo-beta/**'
+      - 'resources/**'
       - '.github/scripts/generate_directory_indexes.py'
+      - '.github/scripts/generate_kodi_repository.py'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -32,6 +35,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Generate Kodi repository metadata and ZIPs
+        run: python3 .github/scripts/generate_kodi_repository.py
+
+      - name: Commit generated repository files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add repo repo-beta repository.e4kng_kodi_repo-stable.zip repository.e4kng_kodi_repo-beta.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "Update generated Kodi repository metadata"
+          fi
 
       - name: Prepare site
         run: |
