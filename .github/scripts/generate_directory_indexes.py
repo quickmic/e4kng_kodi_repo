@@ -31,7 +31,8 @@ def generate_index(directory):
         lines.append('<tr><td><a href="../">Parent Directory</a></td></tr>')
 
     entries = sorted(
-        (entry for entry in directory.iterdir() if not entry.is_symlink() and entry.name != "index.html"),
+        (entry for entry in directory.iterdir()
+         if not entry.is_symlink() and entry.name != "index.html"),
         key=lambda p: (not p.is_dir(), p.name.casefold())
     )
 
@@ -50,7 +51,12 @@ def generate_index(directory):
             f'{html.escape(name)}</a></td></tr>'
         )
 
-    lines.extend(["</tbody>", "</table>", "</body>", "</html>"])
+    lines.extend([
+        "</tbody>",
+        "</table>",
+        "</body>",
+        "</html>",
+    ])
 
     index_file = output / "index.html"
     index_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -60,6 +66,7 @@ def generate_index(directory):
 def main():
     if not SOURCE.is_dir():
         raise RuntimeError(f"Source directory not found: {SOURCE}")
+
     if not SITE.is_dir():
         raise RuntimeError(f"Site directory not found: {SITE}")
 
