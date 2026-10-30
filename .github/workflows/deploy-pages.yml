@@ -6,6 +6,7 @@ on:
     branches:
       - main
     paths:
+      - 'index.html'
       - 'Public testing/**'
       - '.github/scripts/generate_directory_indexes.py'
       - '.github/workflows/deploy-pages.yml'
@@ -34,7 +35,7 @@ jobs:
 
       - name: Prepare site
         run: |
-          mkdir _site
+          mkdir -p _site
           rsync -a --exclude='.git/' --exclude='.github/' --exclude='_site/' ./ _site/
 
       - name: Generate directory listings
